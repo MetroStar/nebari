@@ -14,4 +14,9 @@ module "kubernetes-ingress" {
   load-balancer-annotations = var.load-balancer-annotations
   load-balancer-ip          = var.load-balancer-ip
   additional-arguments      = var.additional-arguments
+
+  availability_zone = "your-availability-zone"  # Replace with your AZ
+  volume_name       = "traefik-data"
+  storage_size      = "10Gi"
+
 }

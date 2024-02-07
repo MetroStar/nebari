@@ -69,3 +69,22 @@ variable "additional-arguments" {
   type        = list(string)
   default     = []
 }
+
+variable "storage_size" { 
+  description = " storage size" 
+  type ="string" 
+  default = "10Gi"
+}
+
+variable "volume_name" { 
+  description=" volume name"
+  type = "string"
+  default ="traefik_data"
+}
+
+variable "ebs_volume_id"
+{
+  description = "ebs volume id"
+  type ="string" 
+  default="id" 
+}

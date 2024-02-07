@@ -73,3 +73,71 @@ variable "additional-arguments" {
   type        = list(string)
   default     = []
 }
+
+variable "volume_name" {
+  description = "Name of the persistent volume"
+  type = string
+}
+
+variable "storage_size" {
+  description = "Size of the persistent volume"
+  type = string
+}
+
+variable "access_modes" {
+  description = "Access modes for the persistent volume"
+  type = list(string)
+  default = ["ReadWriteOnce"]
+}
+
+variable "provisioner_type" {
+  description = "Type of provisioner for the persistent volume"
+  type = string
+  default = "awsElasticBlockStore"
+}
+
+variable "ebs_volume_id" {
+  description = "ID of the EBS volume to use (if using awsElasticBlockStore provisioner)"
+  type = string
+  default = null
+}
+
+variable "fs_type" {
+  description = "File system type for the persistent volume"
+  type = string
+  default = "ext4"
+}
+
+variable "pvc_name" {
+  description = "Name of the persistent volume claim"
+  type = string
+}
+
+variable "namespace" {
+  description = "Namespace for the persistent volume claim"
+  type = string
+  default = "traefik"
+}
+
+
+variable "availability_zone" {
+  description = "Availability zone for the EBS volume"
+  type        = string
+  default     = "us-gov-west-1b"
+}
+
+variable "volume_name" {
+  description = "Name of the EBS volume"
+  type        = string
+}
+
+variable "storage_size" {
+  description = "Size of the EBS volume"
+  type        = string
+}
+
+variable "volume_type" {
+  description = "Type of the EBS volume (e.g., gp2, io1)"
+  type        = string
+  default     = "gp2"
+}

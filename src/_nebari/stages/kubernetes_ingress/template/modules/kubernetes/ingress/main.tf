@@ -160,6 +160,58 @@ resource "kubernetes_service" "traefik_internal" {
       "app.kubernetes.io/component" = "traefik-ingress"
     }
 
+
+resource "aws_ebs_volume" "traefik_data" {
+  availability_zone = var.availability_zone
+  size              = var.storage_size
+  type              = var.volume_type
+
+  tags = {
+    Name = var.volume_name
+  }
+}
+
+
+resource "kubernetes_persistent_volume" "traefik_data" { 
+  metadata { 
+    name = var.volume_name
+
+  }
+  spec = { 
+    capacity = { 
+      storage = var.storage_size
+    }
+    access_modes = var.access_modes
+    persistent_volume_source { 
+      type = var.provisioner_type
+
+      aws_elastic_block_store { 
+        volume_id = var.ebs_volume_id
+        fs_type = var.fs_type
+      }
+    }
+  }
+}
+
+
+resource "kubernetes_persistent_volume_claim" "traefik_data_pvc" { 
+  metadata { 
+    name = var.pvc_name
+    namespace = var.namespace
+  }
+  spec { 
+    access_mode = var.access_modes
+    resources { 
+      requests = { 
+        storage = var.storage_size 
+      }
+    }
+    persistent_volume_claim_source { 
+      claim_name = kubernetes_persistent_volume.traefik_data.metadata.0.name
+    }
+  }
+}
+
     port {
       name        = "http"
       protocol    = "TCP"
