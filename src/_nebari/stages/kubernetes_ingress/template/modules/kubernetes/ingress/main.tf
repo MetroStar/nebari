@@ -162,7 +162,6 @@ resource "kubernetes_service" "traefik_internal" {
 
 
 resource "aws_ebs_volume" "traefik_data" {
-  availability_zone = var.availability_zone
   size              = var.storage_size
   type              = var.volume_type
 
