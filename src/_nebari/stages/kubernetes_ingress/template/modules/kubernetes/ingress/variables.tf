@@ -113,12 +113,6 @@ variable "pvc_name" {
   type = string
 }
 
-variable "namespace" {
-  description = "Namespace for the persistent volume claim"
-  type = string
-  default = "traefik"
-}
-
 
 variable "availability_zone" {
   description = "Availability zone for the EBS volume"
@@ -126,18 +120,14 @@ variable "availability_zone" {
   default     = "us-gov-west-1b"
 }
 
-variable "volume_name" {
-  description = "Name of the EBS volume"
-  type        = string
-}
 
-variable "storage_size" {
-  description = "Size of the EBS volume"
-  type        = string
-}
 
 variable "volume_type" {
   description = "Type of the EBS volume (e.g., gp2, io1)"
   type        = string
   default     = "gp2"
+}
+
+variable "storage_class_name" { 
+  type = string
 }

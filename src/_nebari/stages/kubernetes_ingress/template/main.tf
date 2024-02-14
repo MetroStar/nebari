@@ -15,8 +15,9 @@ module "kubernetes-ingress" {
   load-balancer-ip          = var.load-balancer-ip
   additional-arguments      = var.additional-arguments
 	# for volume persist
-  availability_zone = "your-availability-zone"  # Replace with your AZ
   volume_name       = "traefik-data"
   storage_size      = "10Gi"
+  storage_class_name = "ssd-storage-clas"
+  pvc_name="my-pv"
 
 }

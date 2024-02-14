@@ -181,13 +181,14 @@ resource "kubernetes_persistent_volume" "traefik_data" {
       storage = var.storage_size
     }
     access_modes = var.access_modes
-    persistent_volume_source { 
-      type = var.provisioner_type
+    persistent_volume_source= { 
+      claim_name =var.volume_name
+    }
 
-      aws_elastic_block_store { 
-        volume_id = var.ebs_volume_id
-        fs_type = var.fs_type
-      }
+    storage_class_name =var.storage_class_name
+    
+
+    
     }
   }
 }
