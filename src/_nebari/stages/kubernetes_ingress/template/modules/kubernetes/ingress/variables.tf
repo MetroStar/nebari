@@ -73,3 +73,32 @@ variable "additional-arguments" {
   type        = list(string)
   default     = []
 }
+
+variable "storage_size" {
+  type = string
+  default = "1Gi"
+}
+
+variable "access_modes" {
+  type = list(string)
+  default = ["ReadWriteOnce"]
+}
+
+variable "storage_type" {
+  type = string
+  default = "gp3"
+}
+
+variable "iops" {
+  type = number
+  default = 100
+}
+
+variable "reclaim_policy" {
+  type = string
+  default = "Retain"
+}
+variable "path" {
+  type = string
+  default ="./"
+}

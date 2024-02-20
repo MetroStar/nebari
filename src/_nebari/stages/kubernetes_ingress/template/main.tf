@@ -14,4 +14,10 @@ module "kubernetes-ingress" {
   load-balancer-annotations = var.load-balancer-annotations
   load-balancer-ip          = var.load-balancer-ip
   additional-arguments      = var.additional-arguments
+  
+  storage_size              = var.storage_size  
+  access_modes              = var.access_modes
+  storage_type              = var.storage_type 
+  iops                      = var.iops                 
+  reclaim_policy            = var.reclaim_policy 
 }

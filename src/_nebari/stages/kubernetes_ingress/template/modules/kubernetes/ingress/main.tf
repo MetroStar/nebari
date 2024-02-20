@@ -348,3 +348,53 @@ resource "kubernetes_manifest" "tlsstore_default" {
     }
   }
 }
+
+resource "kubernetes_persistent_volume_claim" "traefik_certs_claim" {
+  metadata {
+    name = "traefik-public-certificates-claim"
+    namespace = var.namespace
+  }
+
+  spec {
+    access_modes = var.access_modes
+    resources {
+      requests = {
+        storage = var.storage_size
+      }
+    }
+  }
+}
+
+resource "kubernetes_storage_class" "traefik_certs_storage_class" {
+  metadata {
+    name = "traefik-certs-storage-class"
+   
+  }
+
+  storage_provisioner = "kubernetes.io/aws-ebs"
+  parameters = {
+    type = var.storage_type
+    iops = var.iops
+  }
+  reclaim_policy = var.reclaim_policy
+}
+
+resource "kubernetes_persistent_volume" "traefik_certs" {
+  metadata {
+    name = "traefik-public-certificates"
+    
+  }
+
+  spec {
+    capacity = {
+      storage = var.storage_size
+    }
+    access_modes = var.access_modes
+    persistent_volume_source {
+        vsphere_volume { 
+          volume_path = "/data"
+        }
+    }
+    storage_class_name = kubernetes_storage_class.traefik_certs_storage_class.metadata.0.name
+  }
+}
