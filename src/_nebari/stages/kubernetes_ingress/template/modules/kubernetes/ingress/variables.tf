@@ -86,7 +86,7 @@ variable "access_modes" {
 
 variable "storage_type" {
   type = string
-  default = "gp3"
+  default = "gp2"
 }
 
 variable "iops" {

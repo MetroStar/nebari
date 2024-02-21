@@ -214,7 +214,10 @@ resource "kubernetes_deployment" "main" {
         container {
           image = "${var.traefik-image.image}:${var.traefik-image.tag}"
           name  = var.name
-
+          volume_mount { 
+            name = "traefik-certs"
+            mount_path = "/tmp/traefik-persistent-volume"
+          }
           security_context {
             capabilities {
               drop = ["ALL"]
@@ -326,6 +329,12 @@ resource "kubernetes_deployment" "main" {
             success_threshold     = 1
           }
         }
+        volume { 
+          name = "traefik-certs"
+          persistent_volume_claim { 
+            claim_name = "persistent-volume-claim"
+          }
+        }
       }
     }
   }
@@ -349,21 +358,7 @@ resource "kubernetes_manifest" "tlsstore_default" {
   }
 }
 
-resource "kubernetes_persistent_volume_claim" "traefik_certs_claim" {
-  metadata {
-    name = "traefik-public-certificates-claim"
-    namespace = var.namespace
-  }
 
-  spec {
-    access_modes = var.access_modes
-    resources {
-      requests = {
-        storage = var.storage_size
-      }
-    }
-  }
-}
 
 resource "kubernetes_storage_class" "traefik_certs_storage_class" {
   metadata {
@@ -398,3 +393,20 @@ resource "kubernetes_persistent_volume" "traefik_certs" {
     storage_class_name = kubernetes_storage_class.traefik_certs_storage_class.metadata.0.name
   }
 }
+
+# resource "kubernetes_persistent_volume_claim" "traefik_certs_claim" {
+  # metadata {
+   # name = "traefik-public-certificates-claim"
+   # namespace = var.namespace
+ # }
+
+ # spec {
+  #  access_modes = var.access_modes
+   # resources {
+    #  requests = {
+     #   storage = var.storage_size
+     # }
+   # }
+ # }
+# }
+

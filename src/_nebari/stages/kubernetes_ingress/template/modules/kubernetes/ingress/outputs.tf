@@ -9,7 +9,7 @@ output "endpoint" {
 }
 
 
-
-output "traefik_certs_pvc_name" {
-  value = kubernetes_persistent_volume_claim.traefik_certs_claim.metadata.0.name
-}
+#
+#output "traefik_certs_pvc_name" {
+ # value = kubernetes_persistent_volume_claim.traefik_certs_claim.metadata.0.name
+#}
