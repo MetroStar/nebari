@@ -9,7 +9,7 @@ locals {
       "--entrypoints.minio.http.tls.certResolver=letsencrypt",
       "--certificatesresolvers.letsencrypt.acme.tlschallenge",
       "--certificatesresolvers.letsencrypt.acme.email=${var.acme-email}",
-      "--certificatesresolvers.letsencrypt.acme.storage=acme.json",
+      "--certificatesresolvers.letsencrypt.acme.storage=/tmp/acme-certificates/acme.json",
       "--certificatesresolvers.letsencrypt.acme.caserver=${var.acme-server}",
     ]
     self-signed = local.default_cert
@@ -216,7 +216,7 @@ resource "kubernetes_deployment" "main" {
           name  = var.name
           volume_mount { 
             name = "traefik-certs"
-            mount_path = "/tmp/traefik-persistent-volume"
+            mount_path = "/tmp/acme-certificates"
           }
           security_context {
             capabilities {
@@ -332,7 +332,7 @@ resource "kubernetes_deployment" "main" {
         volume { 
           name = "traefik-certs"
           persistent_volume_claim { 
-            claim_name = "persistent-volume-claim"
+            claim_name = "persistent-volume-claim-2"
           }
         }
       }
@@ -374,39 +374,49 @@ resource "kubernetes_storage_class" "traefik_certs_storage_class" {
   reclaim_policy = var.reclaim_policy
 }
 
-resource "kubernetes_persistent_volume" "traefik_certs" {
-  metadata {
-    name = "traefik-public-certificates"
-    
-  }
+resource "kubernetes_persistent_volume" "traefik-persistent-volume" {
+  manifest = 
+{
+  "apiVersion"= "v1",
+  "kind"= "PersistentVolume",
+  "metadata"= {
+    "name"= "traefik-persistent-volume"
+    "namespace" = var.namespace
 
-  spec {
-    capacity = {
-      storage = var.storage_size
+  },
+  "spec"= {
+    "accessModes"= ["ReadWriteOnce"],
+    "capacity"= {
+      "storage"= "1Gi"
+    },
+    "storageClassName"= "standard",
+    "hostPath"= {
+      "path"= "/tmp/acme-certificates"
     }
-    access_modes = var.access_modes
-    persistent_volume_source {
-        vsphere_volume { 
-          volume_path = "/data"
-        }
-    }
-    storage_class_name = kubernetes_storage_class.traefik_certs_storage_class.metadata.0.name
+  }
+}
+ 
+}
+
+resource "kubernetes_persistent_volume_claim" "persistent-volume-claim" {
+  manifest = 
+{
+  "apiVersion"= "v1",
+  "kind"= "PersistentVolumeClaim",
+  "metadata"= {
+    "name"= "persistent-volume-claim"
+    "namespace" = var.namespace
+  },
+  "spec"= {
+    "accessModes"= ["ReadWriteOnce"],
+    "resources"= {
+      "requests"= {
+        "storage"= "1Gi"
+      }
+    },
+    "storageClassName"= "standard",
+    "volumeName"= "traefik-persistent-volume"
   }
 }
 
-# resource "kubernetes_persistent_volume_claim" "traefik_certs_claim" {
-  # metadata {
-   # name = "traefik-public-certificates-claim"
-   # namespace = var.namespace
- # }
-
- # spec {
-  #  access_modes = var.access_modes
-   # resources {
-    #  requests = {
-     #   storage = var.storage_size
-     # }
-   # }
- # }
-# }
-
+}

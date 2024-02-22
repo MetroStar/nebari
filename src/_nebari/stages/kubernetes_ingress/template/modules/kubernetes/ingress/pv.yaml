@@ -10,4 +10,4 @@ spec:
     storage: 10Gi
   storageClassName: standard
   hostPath:
-    path: /tmp/traefik-persistent-volume
+    path: /tmp/acme-certificates

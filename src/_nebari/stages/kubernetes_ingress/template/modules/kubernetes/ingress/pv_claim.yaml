@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata: 
-  name: persistent-volume-claim
+  name: persistent-volume-claim-2
   namespace: playground-prince
 spec: 
   accessModes:
@@ -10,4 +10,4 @@ spec:
     requests:
       storage: 10Gi
   storageClassName: standard
-  volumeName: traefik-persistent-volume-1
+  volumeName: traefik-persistent-volume-2
