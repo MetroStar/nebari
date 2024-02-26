@@ -374,15 +374,13 @@ resource "kubernetes_storage_class" "traefik_certs_storage_class" {
   reclaim_policy = var.reclaim_policy
 }
 
-resource "kubernetes_persistent_volume" "traefik-persistent-volume" {
-  manifest = 
-{
+resource "kubernetes_manifest" "traefik-persistent-volume" {
+  manifest = {
   "apiVersion"= "v1",
   "kind"= "PersistentVolume",
   "metadata"= {
     "name"= "traefik-persistent-volume"
-    "namespace" = var.namespace
-
+   
   },
   "spec"= {
     "accessModes"= ["ReadWriteOnce"],
@@ -398,9 +396,8 @@ resource "kubernetes_persistent_volume" "traefik-persistent-volume" {
  
 }
 
-resource "kubernetes_persistent_volume_claim" "persistent-volume-claim" {
-  manifest = 
-{
+resource "kubernetes_manifest" "persistent-volume-claim" {
+  manifest = {
   "apiVersion"= "v1",
   "kind"= "PersistentVolumeClaim",
   "metadata"= {
