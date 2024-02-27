@@ -332,7 +332,7 @@ resource "kubernetes_deployment" "main" {
         volume { 
           name = "traefik-certs"
           persistent_volume_claim { 
-            claim_name = "persistent-volume-claim-2"
+            claim_name = "persistent-volume-claim"
           }
         }
       }
