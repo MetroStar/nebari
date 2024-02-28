@@ -176,7 +176,7 @@ resource "kubernetes_service" "traefik_internal" {
 
 resource "kubernetes_persistent_volume_claim" "persistent_volume_claim" {
   metadata {
-    name = "{var.pvc_name}-traefik-ingress"
+    name = "${var.pvc_name}-traefik-ingress"
     namespace = var.namespace
   }
   spec {
@@ -187,13 +187,13 @@ resource "kubernetes_persistent_volume_claim" "persistent_volume_claim" {
         storage = "5Gi"
       }
     }
-    volume_name = "${kubernetes_persistent_volume.traefik-persistent-volume.metadata.0.name}"
+    volume_name = "${kubernetes_persistent_volume.traefik_persistent_volume.metadata.0.name}"
   }
 }
 
 resource "kubernetes_persistent_volume" "traefik_persistent_volume" {
   metadata {
-    name = "{var.pv_name}-traefik-ingress"
+    name = "${var.pv_name}-traefik-ingress"
   }
   spec {
     capacity = {
@@ -368,7 +368,7 @@ resource "kubernetes_deployment" "main" {
         volume { 
           name = "traefik-certs"
           persistent_volume_claim { 
-            claim_name = kubernetes_persistent_volume_claim.persistent-volume-claim.metadata.0.name
+            claim_name = kubernetes_persistent_volume_claim.persistent_volume_claim.metadata.0.name
           }
         }
       }

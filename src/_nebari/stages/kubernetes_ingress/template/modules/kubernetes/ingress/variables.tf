@@ -82,12 +82,12 @@ variable "access_modes" {
 }
 variable "pvc_name"{
   type = string
-  default = "persistent_volume_claim"
+  default = "persistent-volume-claim"
 }
 
 variable "pv_name"{
   type = string
-  default = "traefik_persistent_volume"
+  default = "traefik-persistent-volume"
 }
 variable "path" {
   type = string
