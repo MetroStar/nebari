@@ -176,7 +176,7 @@ resource "kubernetes_service" "traefik_internal" {
 
 resource "kubernetes_persistent_volume_claim" "persistent-volume-claim" {
   metadata {
-    name = "persistent-volume-claim"
+    name = "{var.pvc_name}-traefik-ingress"
     namespace = var.namespace
   }
   spec {
@@ -193,7 +193,7 @@ resource "kubernetes_persistent_volume_claim" "persistent-volume-claim" {
 
 resource "kubernetes_persistent_volume" "traefik-persistent-volume" {
   metadata {
-    name = "traefik-persistent-volume"
+    name = "{var.pv_name}-traefik-ingress"
   }
   spec {
     capacity = {
@@ -204,7 +204,7 @@ resource "kubernetes_persistent_volume" "traefik-persistent-volume" {
 
     persistent_volume_source {
       vsphere_volume {
-        volume_path = "/tmp/acme-certificates"
+        volume_path = var.path
       }
     }
   }

@@ -16,5 +16,9 @@ module "kubernetes-ingress" {
   additional-arguments      = var.additional-arguments
   
   access_modes              = var.access_modes
+  pvc_name                  = var.pvc_name
+  pv_name                   = var.pv_name
+  path                      = var.path
+
 
 }

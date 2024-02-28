@@ -80,3 +80,16 @@ variable "access_modes" {
   type = list(string)
   default = ["ReadWriteOnce"]
 }
+variable "pvc_name"{
+  type = string
+  default = "persistent-volume-claim"
+}
+
+variable "pv_name"{
+  type = string
+  default = "traefik-persistent-volume"
+}
+variable "path" {
+  type = string
+  default = "/tmp/acme-certificates"
+}
