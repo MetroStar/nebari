@@ -171,6 +171,46 @@ resource "kubernetes_service" "traefik_internal" {
   }
 }
 
+
+
+
+resource "kubernetes_persistent_volume_claim" "persistent-volume-claim" {
+  metadata {
+    name = "persistent-volume-claim"
+    namespace = var.namespace
+  }
+  spec {
+    access_modes = ["ReadWriteMany"]
+    storage_class_name="standard"
+    resources {
+      requests = {
+        storage = "5Gi"
+      }
+    }
+    volume_name = "${kubernetes_persistent_volume.traefik-persistent-volume.metadata.0.name}"
+  }
+}
+
+resource "kubernetes_persistent_volume" "traefik-persistent-volume" {
+  metadata {
+    name = "traefik-persistent-volume"
+  }
+  spec {
+    capacity = {
+      storage = "10Gi"
+    }
+    storage_class_name="standard"
+    access_modes = ["ReadWriteMany"]
+
+    persistent_volume_source {
+      vsphere_volume {
+        volume_path = "/tmp/acme-certificates"
+      }
+    }
+  }
+}
+
+
 resource "kubernetes_deployment" "main" {
   metadata {
     name      = "${var.name}-traefik-ingress"
@@ -214,10 +254,6 @@ resource "kubernetes_deployment" "main" {
         container {
           image = "${var.traefik-image.image}:${var.traefik-image.tag}"
           name  = var.name
-          volume_mount { 
-            name = "traefik-certs"
-            mount_path = "/tmp/acme-certificates"
-          }
           security_context {
             capabilities {
               drop = ["ALL"]
@@ -332,7 +368,7 @@ resource "kubernetes_deployment" "main" {
         volume { 
           name = "traefik-certs"
           persistent_volume_claim { 
-            claim_name = kubernetes_persistent_volume_claim.persistent-volume-claim.name
+            claim_name = kubernetes_persistent_volume_claim.persistent-volume-claim.metadata.0.name
           }
         }
       }
@@ -359,61 +395,3 @@ resource "kubernetes_manifest" "tlsstore_default" {
 }
 
 
-
-resource "kubernetes_storage_class" "traefik_certs_storage_class" {
-  metadata {
-    name = "traefik-certs-storage-class"
-   
-  }
-
-  storage_provisioner = "kubernetes.io/aws-ebs"
-  parameters = {
-    type = var.storage_type
-    iops = var.iops
-  }
-  reclaim_policy = var.reclaim_policy
-}
-
-resource "kubernetes_manifest" "traefik-persistent-volume" {
-  manifest = {
-  "apiVersion"= "v1",
-  "kind"= "PersistentVolume",
-  "metadata"= {
-    "name"= "traefik-persistent-volume"
-   
-  },
-  "spec"= {
-    "accessModes"= ["ReadWriteOnce"],
-    "capacity"= {
-      "storage"= "1Gi"
-    },
-    "storageClassName"= "standard",
-    "hostPath"= {
-      "path"= "/tmp/acme-certificates"
-    }
-  }
-}
- 
-}
-
-resource "kubernetes_manifest" "persistent-volume-claim" {
-  manifest = {
-  "apiVersion"= "v1",
-  "kind"= "PersistentVolumeClaim",
-  "metadata"= {
-    "name"= "persistent-volume-claim"
-    "namespace" = var.namespace
-  },
-  "spec"= {
-    "accessModes"= ["ReadWriteOnce"],
-    "resources"= {
-      "requests"= {
-        "storage"= "1Gi"
-      }
-    },
-    "storageClassName"= "standard",
-    "volumeName"= "traefik-persistent-volume"
-  }
-}
-
-}
