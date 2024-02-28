@@ -174,7 +174,7 @@ resource "kubernetes_service" "traefik_internal" {
 
 
 
-resource "kubernetes_persistent_volume_claim" "persistent-volume-claim" {
+resource "kubernetes_persistent_volume_claim" "persistent_volume_claim" {
   metadata {
     name = "{var.pvc_name}-traefik-ingress"
     namespace = var.namespace
@@ -191,7 +191,7 @@ resource "kubernetes_persistent_volume_claim" "persistent-volume-claim" {
   }
 }
 
-resource "kubernetes_persistent_volume" "traefik-persistent-volume" {
+resource "kubernetes_persistent_volume" "traefik_persistent_volume" {
   metadata {
     name = "{var.pv_name}-traefik-ingress"
   }
