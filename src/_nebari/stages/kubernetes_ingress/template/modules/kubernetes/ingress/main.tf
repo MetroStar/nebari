@@ -203,8 +203,8 @@ resource "kubernetes_persistent_volume" "traefik_persistent_volume" {
     access_modes = ["ReadWriteMany"]
 
     persistent_volume_source {
-      vsphere_volume {
-        volume_path = var.path
+      host_path {
+        path = var.path
       }
     }
   }
@@ -254,6 +254,10 @@ resource "kubernetes_deployment" "main" {
         container {
           image = "${var.traefik-image.image}:${var.traefik-image.tag}"
           name  = var.name
+          volume_mount { 
+            mount_path = var.path
+            name = "data"
+          }
           security_context {
             capabilities {
               drop = ["ALL"]
@@ -366,7 +370,7 @@ resource "kubernetes_deployment" "main" {
           }
         }
         volume { 
-          name = "traefik-certs"
+          name = "data"
           persistent_volume_claim { 
             claim_name = kubernetes_persistent_volume_claim.persistent_volume_claim.metadata.0.name
           }
