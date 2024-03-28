@@ -58,7 +58,7 @@ jobs:
       fail-fast: false
     steps:
       - name: "Debug Print NO_PROVIDER_CREDENTIALS"
-        run:  ${{ vars.NO_PROVIDER_CREDENTIALS }}
+        run:  echo ${{ vars.NO_PROVIDER_CREDENTIALS }}
 
       - name: "Checkout Infrastructure"
         uses: actions/checkout@v4
