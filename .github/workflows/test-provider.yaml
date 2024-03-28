@@ -62,9 +62,10 @@ jobs:
 
       - name: Checkout the branch from the PR that triggered the job
         if: ${{ github.event_name == 'issue_comment' }}
-        run: hub pr checkout ${{ inputs.pr_number }}
+        run: hub pr checkout ${{ inputs.pr_number }} && echo 'NO_PROVIDER_CREDENTIALS' ${{ vars.NO_PROVIDER_CREDENTIALS }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          #NO_PROVIDER_CREDENTIALS: ${{ vars.NO_PROVIDER_CREDENTIALS }}
 
       - name: Set up Python
         uses: actions/setup-python@v5
