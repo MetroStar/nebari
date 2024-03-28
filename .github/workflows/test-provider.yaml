@@ -57,12 +57,15 @@ jobs:
           - gitlab-ci
       fail-fast: false
     steps:
+      - name: "Debug Print NO_PROVIDER_CREDENTIALS"
+        run:  ${{ vars.NO_PROVIDER_CREDENTIALS }}
+
       - name: "Checkout Infrastructure"
         uses: actions/checkout@v4
 
       - name: Checkout the branch from the PR that triggered the job
         if: ${{ github.event_name == 'issue_comment' }}
-        run: hub pr checkout ${{ inputs.pr_number }} && echo 'NO_PROVIDER_CREDENTIALS' ${{ vars.NO_PROVIDER_CREDENTIALS }}
+        run: hub pr checkout ${{ inputs.pr_number }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           #NO_PROVIDER_CREDENTIALS: ${{ vars.NO_PROVIDER_CREDENTIALS }}
