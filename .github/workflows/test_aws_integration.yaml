@@ -71,6 +71,7 @@ jobs:
           playwright install
 
       - name: Retrieve secret from Vault
+        if: ${{ env.PROJECT_OWNER }} == 'nebari-dev'
         uses: hashicorp/vault-action@v2.5.0
         with:
           method: jwt
