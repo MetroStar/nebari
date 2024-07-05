@@ -46,6 +46,14 @@ jobs:
       id-token: write
       contents: read
     steps:
+      - name: Check branch
+        id: check_branch
+        run: echo "::set-output name=branch::$(git rev-parse --aabrev-ref HEAD)"
+    
+      - name: Skip branch
+        if: steps.check_branch.outputs.branch == 'gha-tests-off'
+        run: echo "Skipping tests due to lack of certs in repo" && exit 0
+    
       - name: Checkout
         uses: actions/checkout@v4
         with:
