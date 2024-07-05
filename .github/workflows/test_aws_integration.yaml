@@ -1,6 +1,10 @@
 name: AWS Deployment
 
 on:
+  push:
+    branches-ignore:
+      -'develope/*'
+      -'gha-tests-off'
   schedule:
     - cron: "0 0 * * MON"
   workflow_dispatch:
