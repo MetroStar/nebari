@@ -76,7 +76,6 @@ jobs:
 
       - name: Retrieve secret from Vault
         if: ${{ env.PROJECT_OWNER }} == 'nebari-dev'
-        run: echo 'Retrieving keys'
         uses: hashicorp/vault-action@v2.5.0
         with:
           method: jwt
