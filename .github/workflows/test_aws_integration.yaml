@@ -37,6 +37,7 @@ env:
   NEBARI_GH_BRANCH: ${{ github.event.inputs.branch || 'develop' }}
   NEBARI_IMAGE_TAG: ${{ github.event.inputs.image-tag || 'main' }}
   TF_LOG: ${{ github.event.inputs.tf-log-level || 'info' }}
+  PROJECT_OWNER: ${{ github.repository_owner }}
 
 
 jobs:
@@ -50,9 +51,8 @@ jobs:
         id: check_branch
         run: echo "::set-output name=branch::$(git rev-parse --aabrev-ref HEAD)"
     
-      - name: Skip branch
-        if: steps.check_branch.outputs.branch == 'gha-tests-off'
-        run: echo "Skipping tests due to lack of certs in repo" && exit 0
+      - name: owner check
+        run: echo ${{ env.PROJECT_OWNER }} && exit 0
     
       - name: Checkout
         uses: actions/checkout@v4
