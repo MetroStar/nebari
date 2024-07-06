@@ -45,7 +45,7 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    if: ${{ github.repository_owner }} == 'nebari-dev'
+    if: ${{ github.repository_owner }} == "nebari-dev"
     
     steps:
       - name: Check branch
