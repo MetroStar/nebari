@@ -49,9 +49,11 @@ jobs:
     steps:
     
       - name: owner check
-        if: ${{ github.repository_owner }} != "nebari-dev"
-        run: echo ${{ github.repository_owner }} && exit 1
-        continue-on-error: true
+        run: if:[ ${{ github.repository_owner }} != "nebari-dev" ]; then
+                echo ${{ github.repository_owner }}
+                echo "No credentials, exiting"
+                exit 1
+              fi
         
       - name: Check branch
         id: check_branch
