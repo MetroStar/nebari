@@ -45,15 +45,17 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    if: ${{ github.repository_owner }} == "nebari-dev"
     
     steps:
+    
+      - name: owner check
+        if: ${{ github.repository_owner }} != "nebari-dev"
+        run: echo ${{ github.repository_owner }} && exit 1
+        continue-on-error: true
+        
       - name: Check branch
         id: check_branch
         run: echo "::set-output name=branch::$(git rev-parse --aabrev-ref HEAD)"
-    
-      - name: owner check
-        run: echo ${{ env.PROJECT_OWNER }} && exit 0
     
       - name: Checkout
         uses: actions/checkout@v4
