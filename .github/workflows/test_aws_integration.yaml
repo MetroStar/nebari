@@ -37,7 +37,7 @@ env:
   NEBARI_GH_BRANCH: ${{ github.event.inputs.branch || 'develop' }}
   NEBARI_IMAGE_TAG: ${{ github.event.inputs.image-tag || 'main' }}
   TF_LOG: ${{ github.event.inputs.tf-log-level || 'info' }}
-  NO_PROVIDER_CREDENTIALS: true
+  NO_PROVIDER_CREDENTIALS: false
   
 
 jobs:
@@ -47,22 +47,22 @@ jobs:
     permissions:
       id-token: write
       contents: read
+
+    outputs:
+      flag_output: ${{ steps.flag-check.outcome }}
     
     steps:
           
       - name: flag-check-true
+        id: flag-check
         if: ${{ env.NO_PROVIDER_CREDENTIALS == 'true' }}
         run: echo "No provider Credentials flag caught"
             exit 2
-
-      - name: flag-check-false
-        if: ${{ env.NO_PROVIDER_CREDENTIALS == 'false' }}
-        run: echo "Flag is not present, proceed with job"
-            exit 0
     
   test-aws-integration:
     runs-on: ubuntu-latest
-    if: ${{ env.NO_PROVIDER_CREDENTIALS == 'false' }}
+    needs: check-for-credentials
+    if: ${{ needs.check-for-credentials.outputs.flag_output == null }}
     permissions:
       id-token: write
       contents: read
