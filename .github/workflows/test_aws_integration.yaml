@@ -49,14 +49,23 @@ jobs:
       contents: read
     
     steps:
+     - name: Check branch
+        run: echo "::set-output name=branch::$(git rev-parse --aabrev-ref HEAD)"
+    
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.NEBARI_GH_BRANCH }}
+          fetch-depth: 0
+          
       - name: flag-check-true
-        if: env.NO_PROVIDER_CREDENTIALS == true
+        if: ${{ env.NO_PROVIDER_CREDENTIALS == 'true' }}
         run: echo "No provider Credentials flag caught"
             exit 2
 
       - name: flag-check-false
-        if: env.NO_PROVIDER_CREDENTIALS == false
-        run: echo "No provider Credentials flag caught"
+        if: ${{ env.NO_PROVIDER_CREDENTIALS == 'false' }}
+        run: echo "Flag is not present, proceed with job"
             exit 0
     
   test-aws-integration:
