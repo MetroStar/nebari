@@ -61,7 +61,6 @@ jobs:
     
   test-aws-integration:
     runs-on: ubuntu-latest
-    needs: check-for-credentials
     if: ${{ needs.check-for-credentials.outputs.flag_output == null }}
     permissions:
       id-token: write
