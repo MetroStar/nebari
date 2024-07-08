@@ -37,7 +37,7 @@ env:
   NEBARI_GH_BRANCH: ${{ github.event.inputs.branch || 'develop' }}
   NEBARI_IMAGE_TAG: ${{ github.event.inputs.image-tag || 'main' }}
   TF_LOG: ${{ github.event.inputs.tf-log-level || 'info' }}
-  NO_PROVIDER_CREDENTIALS: false
+  NO_PROVIDER_CREDENTIALS: true
   
 
 jobs:
@@ -49,14 +49,6 @@ jobs:
       contents: read
     
     steps:
-     - name: Check branch
-        run: echo "::set-output name=branch::$(git rev-parse --aabrev-ref HEAD)"
-    
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ env.NEBARI_GH_BRANCH }}
-          fetch-depth: 0
           
       - name: flag-check-true
         if: ${{ env.NO_PROVIDER_CREDENTIALS == 'true' }}
