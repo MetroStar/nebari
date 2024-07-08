@@ -68,7 +68,7 @@ jobs:
     
   test-aws-integration:
     runs-on: ubuntu-latest
-    if: ${{ needs.check-for-credentials.outputs.flag_output == 'success' }}
+    if: ${{ needs.check-for-credentials.outputs.flag_output == null }}
     permissions:
       id-token: write
       contents: read
@@ -78,6 +78,7 @@ jobs:
       - name: Check branch
         id: check_branch
         run: echo "::set-output name=branch::$(git rev-parse --aabrev-ref HEAD)"
+            echo ${{ needs.check-for-credentials.outputs.flag_output }}
     
       - name: Checkout
         uses: actions/checkout@v4
