@@ -48,7 +48,7 @@ jobs:
       contents: read
 
     outputs:
-      flag_output: ${{ steps.flag-check.outcome }}
+      flag_output: ${{ steps.flag-check-false.outcome }}
     
     steps:
           
@@ -56,7 +56,6 @@ jobs:
         id: flag-check-true
         if: ${{ env.NO_PROVIDER_CREDENTIALS == 'true' }}
         run: |
-            provider_credentials=0
             echo "::set-output name=provider_credentials::0"
             exit 0
 
@@ -64,7 +63,6 @@ jobs:
         id: flag-check-false
         if: ${{ env.NO_PROVIDER_CREDENTIALS == 'false' }}
         run: |
-            provider_credentials=1
             echo "::set-output name=provider_credentials::1"
             exit 0
             
@@ -72,7 +70,7 @@ jobs:
   test-aws-integration:
     runs-on: ubuntu-latest
     needs: check-for-credentials
-    if: ${{ needs.check-for-credentials.outputs.provider_credentials == 1 }}
+    if: ${{ needs.check-for-credentials.outputs.provider_credentials == '1' }}
     permissions:
       id-token: write
       contents: read
