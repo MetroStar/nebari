@@ -46,7 +46,7 @@ jobs:
     
     steps:
 
-      - name: Check if user wants to run AWS integration based on credentials
+      - name: Check if user wants to run Azure integration based on credentials
         id: flag-check
         run: |
           if [ "${{ env.NO_PROVIDER_CREDENTIALS }}" == "true" ]; then
