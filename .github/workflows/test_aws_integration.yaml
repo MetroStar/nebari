@@ -67,7 +67,7 @@ jobs:
         run: |
             provider_credentials=1
             echo "::set-output name=provider_credentials::$provider_credentials
-            exit 1
+            exit 0
             
     
   test-aws-integration:
