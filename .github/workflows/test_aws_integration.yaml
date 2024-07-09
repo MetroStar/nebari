@@ -48,24 +48,18 @@ jobs:
       contents: read
 
     outputs:
-      flag_output: ${{ steps.flag-check-false.outcome }}
+      provider_credentials: ${{ steps.flag-check.outputs.provider_credentials }}
     
     steps:
-          
-      - name: flag-check-true
-        id: flag-check-true
-        if: ${{ env.NO_PROVIDER_CREDENTIALS == 'true' }}
-        run: |
-            echo "::set-output name=provider_credentials::0"
-            exit 0
 
-      - name: flag-check-false
-        id: flag-check-false
-        if: ${{ env.NO_PROVIDER_CREDENTIALS == 'false' }}
+      - name: Check if user wants to run AWS integration based on credentials
+        id: flag-check
         run: |
+          if [ "${{ env.NO_PROVIDER_CREDENTIALS }}" == "true" ]; then
+            echo "::set-output name=provider_credentials::0"
+          else
             echo "::set-output name=provider_credentials::1"
-            exit 0
-            
+          fi        
     
   test-aws-integration:
     runs-on: ubuntu-latest
