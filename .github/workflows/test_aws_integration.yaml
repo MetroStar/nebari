@@ -37,7 +37,7 @@ env:
   NEBARI_GH_BRANCH: ${{ github.event.inputs.branch || 'develop' }}
   NEBARI_IMAGE_TAG: ${{ github.event.inputs.image-tag || 'main' }}
   TF_LOG: ${{ github.event.inputs.tf-log-level || 'info' }}
-  NO_PROVIDER_CREDENTIALS: true
+  NO_PROVIDER_CREDENTIALS: false
   
 
 jobs:
