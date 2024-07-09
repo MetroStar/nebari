@@ -54,15 +54,15 @@ jobs:
     steps:
           
       - name: flag-check-true
-        id: flag-check
+        id: flag-check-true
         if: ${{ env.NO_PROVIDER_CREDENTIALS == 'true' }}
         run: |
             provider_credentials=0
             echo "::set-output name=provider_credentials::$provider_credentials
             exit 0
 
-      - name: flag-check-true
-        id: flag-check-success
+      - name: flag-check-false
+        id: flag-check-false
         if: ${{ env.NO_PROVIDER_CREDENTIALS == 'false' }}
         run: |
             provider_credentials=1
