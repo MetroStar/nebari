@@ -15,6 +15,11 @@ variable "keycloak-read-only-user-credentials" {
   type        = map(string)
 }
 
+variable "workflow-controller-image" {
+  description = "Image for nebari-workflow-controller"
+  type        = string
+}
+
 variable "workflow-controller-image-tag" {
   description = "Image tag for nebari-workflow-controller"
   type        = string
