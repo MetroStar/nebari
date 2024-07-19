@@ -225,6 +225,17 @@ class Telemetry(schema.Base):
 class JupyterHub(schema.Base):
     overrides: Dict = {}
 
+class JupyterHubSshImage(schema.Base):
+    name: str = "quay.io/jupyterhub-ssh/ssh"
+    tag: str = "0.0.1-0.dev.git.136.ha610981"
+
+class JupyterHubSftpImage(schema.Base):
+    name: str = "quay.io/jupyterhub-ssh/sftp"
+    tag: str = "0.0.1-0.dev.git.142.h402a3d6"
+
+class JupyterHubSsh(schema.Base):
+    jupyterhub_ssh_image: JupyterHubSshImage = JupyterHubSshImage()
+    jupyterhub_sftp_image: JupyterHubSftpImage = JupyterHubSftpImage()
 
 class IdleCuller(schema.Base):
     terminal_cull_inactive_timeout: int = 15
@@ -315,6 +326,7 @@ class InputSchema(schema.Base):
     monitoring: Monitoring = Monitoring()
     telemetry: Telemetry = Telemetry()
     jupyterhub: JupyterHub = JupyterHub()
+    jupyterhub_ssh: JupyterHubSsh = JupyterHubSsh()
     jupyterlab: JupyterLab = JupyterLab()
     jhub_apps: JHubApps = JHubApps()
 
@@ -384,6 +396,13 @@ class JupyterhubInputVars(schema.Base):
     cloud_provider: str = Field(alias="cloud-provider")
     jupyterlab_preferred_dir: Optional[str] = Field(alias="jupyterlab-preferred-dir")
 
+class JupyterhubSshInputVars(schema.Base):
+    jupyterhub_ssh_image: Dict[str, Any] = Field(
+        alias="jupyterhub-ssh-image"
+    )
+    jupyterhub_sftp_image: Dict[str, Any] = Field(
+        alias="jupyterhub-sftp-image"
+    )
 
 class DaskGatewayInputVars(schema.Base):
     dask_worker_image: ImageNameTag = Field(alias="dask-worker-image")
@@ -539,6 +558,11 @@ class KubernetesServicesStage(NebariTerraformStage):
             jupyterlab_preferred_dir=self.config.jupyterlab.preferred_dir,
         )
 
+        jupyterhub_ssh_vars = JupyterhubSshInputVars(
+            jupyterhub_ssh_image=self.config.jupyterhub_ssh.jupyterhub_ssh_image.model_dump(),
+            jupyterhub_sftp_image=self.config.jupyterhub_ssh.jupyterhub_sftp_image.model_dump(),
+        )
+
         dask_gateway_vars = DaskGatewayInputVars(
             dask_worker_image=_split_docker_image_name(
                 self.config.default_images.dask_worker
@@ -577,6 +601,7 @@ class KubernetesServicesStage(NebariTerraformStage):
             **kubernetes_services_vars.model_dump(by_alias=True),
             **conda_store_vars.model_dump(by_alias=True),
             **jupyterhub_vars.model_dump(by_alias=True),
+            **jupyterhub_ssh_vars.model_dump(by_alias=True),
             **dask_gateway_vars.model_dump(by_alias=True),
             **monitoring_vars.model_dump(by_alias=True),
             **argo_workflows_vars.model_dump(by_alias=True),
