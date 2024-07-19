@@ -33,6 +33,7 @@ module "argo-workflows" {
   node-group                          = var.node_groups.general
   overrides                           = var.argo-workflows-overrides
   keycloak-read-only-user-credentials = var.keycloak-read-only-user-credentials
+  workflow-controller-image           = var.workflow-controller-image
   workflow-controller-image-tag       = var.workflow-controller-image-tag
   nebari-workflow-controller          = var.nebari-workflow-controller
 }

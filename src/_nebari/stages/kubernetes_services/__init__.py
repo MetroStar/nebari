@@ -187,6 +187,7 @@ class CondaStore(schema.Base):
 
 class NebariWorkflowController(schema.Base):
     enabled: bool = True
+    image: str = "quay.io/nebari/nebari-workflow-controller"
     image_tag: str = constants.DEFAULT_NEBARI_WORKFLOW_CONTROLLER_IMAGE_TAG
 
 
@@ -412,6 +413,7 @@ class ArgoWorkflowsInputVars(schema.Base):
     argo_workflows_enabled: bool = Field(alias="argo-workflows-enabled")
     argo_workflows_overrides: List[str] = Field(alias="argo-workflows-overrides")
     nebari_workflow_controller: bool = Field(alias="nebari-workflow-controller")
+    workflow_controller_image: str = Field(alias="workflow-controller-image")
     workflow_controller_image_tag: str = Field(alias="workflow-controller-image-tag")
     keycloak_read_only_user_credentials: Dict[str, Any] = Field(
         alias="keycloak-read-only-user-credentials"
@@ -566,6 +568,7 @@ class KubernetesServicesStage(NebariTerraformStage):
             argo_workflows_enabled=self.config.argo_workflows.enabled,
             argo_workflows_overrides=[json.dumps(self.config.argo_workflows.overrides)],
             nebari_workflow_controller=self.config.argo_workflows.nebari_workflow_controller.enabled,
+            workflow_controller_image=self.config.argo_workflows.nebari_workflow_controller.image,
             workflow_controller_image_tag=self.config.argo_workflows.nebari_workflow_controller.image_tag,
             keycloak_read_only_user_credentials=keycloak_read_only_user_credentials,
         )

@@ -545,7 +545,7 @@ resource "kubernetes_manifest" "deployment_admission_controller" {
                   "readOnly"  = true
                 },
               ]
-              "image" = "quay.io/nebari/nebari-workflow-controller:${var.workflow-controller-image-tag}"
+              "image" = "${var.workflow-controller-image}:${var.workflow-controller-image-tag}"
               "name"  = "admission-controller"
             },
           ]

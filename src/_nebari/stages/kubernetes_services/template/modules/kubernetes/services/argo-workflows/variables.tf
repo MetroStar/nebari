@@ -42,6 +42,12 @@ variable "keycloak-read-only-user-credentials" {
   default     = {}
 }
 
+variable "workflow-controller-image" {
+  description = "Image for nebari-workflow-controller"
+  type        = string
+  default     = "quay.io/nebari/nebari-workflow-controller"
+}
+
 variable "workflow-controller-image-tag" {
   description = "Image tag for nebari-workflow-controller"
   type        = string
