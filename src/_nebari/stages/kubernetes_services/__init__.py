@@ -184,7 +184,6 @@ class CondaStore(schema.Base):
     default_namespace: str = "nebari-git"
     object_storage: str = "200Gi"
 
-
 class NebariWorkflowController(schema.Base):
     enabled: bool = True
     image: str = "quay.io/nebari/nebari-workflow-controller"
@@ -237,6 +236,18 @@ class JupyterHubSftpImage(schema.Base):
 class JupyterHubSsh(schema.Base):
     jupyterhub_ssh_image: JupyterHubSshImage = JupyterHubSshImage()
     jupyterhub_sftp_image: JupyterHubSftpImage = JupyterHubSftpImage()
+
+class DaskGatewayImage(schema.Base):
+    name: str = "ghcr.io/dask/dask-gateway-server"
+    tag: str = "2022.4.0"
+
+class DaskControllerImage(schema.Base):
+    name: str = "ghcr.io/dask/dask-gateway-server"
+    tag: str = "2022.4.0"
+
+class DaskGateway(schema.Base):
+    dask_gateway_image: DaskGatewayImage = DaskGatewayImage()
+    dask_controller_image: DaskControllerImage = DaskControllerImage()
 
 class IdleCuller(schema.Base):
     terminal_cull_inactive_timeout: int = 15
@@ -329,6 +340,7 @@ class InputSchema(schema.Base):
     jupyterhub: JupyterHub = JupyterHub()
     jupyterhub_ssh: JupyterHubSsh = JupyterHubSsh()
     jupyterlab: JupyterLab = JupyterLab()
+    dask_gateway: DaskGateway = DaskGateway()
     jhub_apps: JHubApps = JHubApps()
 
 
@@ -407,6 +419,8 @@ class JupyterhubSshInputVars(schema.Base):
 
 class DaskGatewayInputVars(schema.Base):
     dask_worker_image: ImageNameTag = Field(alias="dask-worker-image")
+    dask_gateway_image: ImageNameTag = Field(alias="gateway-image")
+    dask_controller_image: ImageNameTag = Field(alias="controller-image")
     dask_gateway_profiles: Dict[str, Any] = Field(alias="dask-gateway-profiles")
     cloud_provider: str = Field(alias="cloud-provider")
     forwardauth_middleware_name: str = _forwardauth_middleware_name
@@ -569,6 +583,8 @@ class KubernetesServicesStage(NebariTerraformStage):
             dask_worker_image=_split_docker_image_name(
                 self.config.default_images.dask_worker
             ),
+            dask_gateway_image=self.config.dask_gateway.dask_gateway_image.model_dump(),
+            dask_controller_image=self.config.dask_gateway.dask_controller_image.model_dump(),
             dask_gateway_profiles=self.config.profiles.model_dump()["dask_worker"],
             cloud_provider=cloud_provider,
         )

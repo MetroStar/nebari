@@ -7,6 +7,22 @@ variable "dask-worker-image" {
   })
 }
 
+variable "gateway-image" {
+  description = "dask gateway image to use for gateway"
+  type = object({
+    name = string
+    tag  = string
+  })
+}
+
+variable "controller-image" {
+  description = "dask gateway image to use for controller"
+  type = object({
+    name = string
+    tag  = string
+  })
+}
+
 variable "dask-gateway-profiles" {
   description = "Dask Gateway profiles to expose to user"
 }
@@ -22,6 +38,9 @@ module "dask-gateway" {
   external-url = var.endpoint
 
   cluster-image = var.dask-worker-image
+
+  gateway-image    = var.gateway-image
+  controller-image = var.controller-image
 
   general-node-group = var.node_groups.general
   worker-node-group  = var.node_groups.worker
