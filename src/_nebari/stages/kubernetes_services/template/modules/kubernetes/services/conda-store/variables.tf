@@ -76,3 +76,21 @@ variable "services" {
   description = "Map of services tokens and scopes for conda-store"
   type        = map(any)
 }
+
+variable "conda-store-minio-overrides" {
+  description = "Minio helm chart overrides"
+  type        = list(string)
+  default     = []
+}
+
+variable "conda-store-postgresql-overrides" {
+  description = "Postgresql helm chart overrides"
+  type        = list(string)
+  default     = []
+}
+
+variable "conda-store-redis-overrides" {
+  description = "Redis helm chart overrides"
+  type        = list(string)
+  default     = []
+}

@@ -38,6 +38,24 @@ variable "conda-store-service-token-scopes" {
   type        = map(any)
 }
 
+variable "conda-store-minio-overrides" {
+  description = "Minio helm chart overrides"
+  type        = list(string)
+  default     = []
+}
+
+variable "conda-store-postgresql-overrides" {
+  description = "Postgresql helm chart overrides"
+  type        = list(string)
+  default     = []
+}
+
+variable "conda-store-redis-overrides" {
+  description = "Redis helm chart overrides"
+  type        = list(string)
+  default     = []
+}
+
 # ====================== RESOURCES =======================
 module "kubernetes-conda-store-server" {
   source = "./modules/kubernetes/services/conda-store"
@@ -61,6 +79,10 @@ module "kubernetes-conda-store-server" {
   services       = var.conda-store-service-token-scopes
   extra-settings = var.conda-store-extra-settings
   extra-config   = var.conda-store-extra-config
+
+  conda-store-minio-overrides = var.conda-store-minio-overrides
+  conda-store-postgresql-overrides = var.conda-store-postgresql-overrides
+  conda-store-redis-overrides = var.conda-store-redis-overrides
 }
 
 module "conda-store-nfs-mount" {

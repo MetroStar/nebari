@@ -12,6 +12,8 @@ module "minio" {
   buckets = [
     "conda-store"
   ]
+
+  overrides = var.conda-store-minio-overrides
 }
 
 
@@ -24,6 +26,8 @@ module "postgresql" {
   node-group = var.node-group
 
   database = "conda-store"
+
+  overrides = var.conda-store-postgresql-overrides
 }
 
 
@@ -34,4 +38,6 @@ module "redis" {
   namespace = var.namespace
 
   node-group = var.node-group
+
+  overrides = var.conda-store-redis-overrides
 }

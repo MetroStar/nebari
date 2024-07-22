@@ -175,6 +175,10 @@ class CondaEnvironment(schema.Base):
     channels: Optional[List[str]] = None
     dependencies: List[Union[str, Dict[str, List[str]]]]
 
+class CondaStoreOverrides(schema.Base):
+    minio: Dict = {}
+    postgresql: Dict = {}
+    redis: Dict = {}
 
 class CondaStore(schema.Base):
     extra_settings: Dict[str, Any] = {}
@@ -183,6 +187,7 @@ class CondaStore(schema.Base):
     image_tag: str = constants.DEFAULT_CONDA_STORE_IMAGE_TAG
     default_namespace: str = "nebari-git"
     object_storage: str = "200Gi"
+    overrides: CondaStoreOverrides = CondaStoreOverrides()
 
 class NebariWorkflowController(schema.Base):
     enabled: bool = True
@@ -386,6 +391,9 @@ class CondaStoreInputVars(schema.Base):
     conda_store_service_token_scopes: Dict[str, Dict[str, Any]] = Field(
         alias="conda-store-service-token-scopes"
     )
+    conda_store_minio_overrides: List[str] = Field(alias="conda-store-minio-overrides")
+    conda_store_postgresql_overrides: List[str] = Field(alias="conda-store-postgresql-overrides")
+    conda_store_redis_overrides: List[str] = Field(alias="conda-store-redis-overrides")
 
 
 class JupyterhubInputVars(schema.Base):
@@ -548,6 +556,9 @@ class KubernetesServicesStage(NebariTerraformStage):
             conda_store_extra_config=self.config.conda_store.extra_config,
             conda_store_image=self.config.conda_store.image,
             conda_store_image_tag=self.config.conda_store.image_tag,
+            conda_store_minio_overrides=[json.dumps(self.config.conda_store.overrides.minio)],
+            conda_store_postgresql_overrides=[json.dumps(self.config.conda_store.overrides.postgresql)],
+            conda_store_redis_overrides=[json.dumps(self.config.conda_store.overrides.redis)],
         )
 
         jupyterhub_vars = JupyterhubInputVars(
