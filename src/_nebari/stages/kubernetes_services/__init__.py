@@ -256,6 +256,13 @@ class DaskGateway(schema.Base):
     dask_gateway_image: DaskGatewayImage = DaskGatewayImage()
     dask_controller_image: DaskControllerImage = DaskControllerImage()
 
+class ForwardAuthImage(schema.Base):
+    name: str = "maxisme/traefik-forward-auth"
+    tag: str = "sha-a98e568"
+
+class ForwardAuth(schema.Base):
+    traefik_forwardauth_image: ForwardAuthImage = ForwardAuthImage()
+
 class IdleCuller(schema.Base):
     terminal_cull_inactive_timeout: int = 15
     terminal_cull_interval: int = 5
@@ -348,6 +355,7 @@ class InputSchema(schema.Base):
     jupyterhub_ssh: JupyterHubSsh = JupyterHubSsh()
     jupyterlab: JupyterLab = JupyterLab()
     dask_gateway: DaskGateway = DaskGateway()
+    forward_auth: ForwardAuth = ForwardAuth()
     jhub_apps: JHubApps = JHubApps()
 
 
@@ -429,6 +437,7 @@ class JupyterhubSshInputVars(schema.Base):
         alias="jupyterhub-sftp-image"
     )
 
+
 class DaskGatewayInputVars(schema.Base):
     dask_worker_image: ImageNameTag = Field(alias="dask-worker-image")
     dask_gateway_image: ImageNameTag = Field(alias="gateway-image")
@@ -436,6 +445,10 @@ class DaskGatewayInputVars(schema.Base):
     dask_gateway_profiles: Dict[str, Any] = Field(alias="dask-gateway-profiles")
     cloud_provider: str = Field(alias="cloud-provider")
     forwardauth_middleware_name: str = _forwardauth_middleware_name
+
+
+class ForwardAuthInputVars(schema.Base):
+    traefik_forwardauth_image: ImageNameTag = Field(alias="traefik-forwardauth-image")
 
 
 class MonitoringInputVars(schema.Base):
@@ -606,6 +619,10 @@ class KubernetesServicesStage(NebariTerraformStage):
             cloud_provider=cloud_provider,
         )
 
+        forward_auth_vars = ForwardAuthInputVars(
+            traefik_forwardauth_image=self.config.forward_auth.traefik_forwardauth_image.model_dump(),
+        )
+
         monitoring_vars = MonitoringInputVars(
             monitoring_enabled=self.config.monitoring.enabled,
             minio_enabled=self.config.monitoring.minio_enabled,
@@ -639,6 +656,7 @@ class KubernetesServicesStage(NebariTerraformStage):
             **jupyterhub_vars.model_dump(by_alias=True),
             **jupyterhub_ssh_vars.model_dump(by_alias=True),
             **dask_gateway_vars.model_dump(by_alias=True),
+            **forward_auth_vars.model_dump(by_alias=True),
             **monitoring_vars.model_dump(by_alias=True),
             **argo_workflows_vars.model_dump(by_alias=True),
             **telemetry_vars.model_dump(by_alias=True),

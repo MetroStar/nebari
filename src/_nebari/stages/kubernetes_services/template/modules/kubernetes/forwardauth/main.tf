@@ -75,7 +75,8 @@ resource "kubernetes_deployment" "forwardauth-deployment" {
         container {
           # image = "thomseddon/traefik-forward-auth:2.2.0"
           # Use PR #159 https://github.com/thomseddon/traefik-forward-auth/pull/159
-          image = "maxisme/traefik-forward-auth:sha-a98e568"
+          #image = "maxisme/traefik-forward-auth:sha-a98e568"
+          image = "${traefik-forwardauth-image.name}:${var.traefik-forwardauth-image.tag}"
           name  = "forwardauth-container"
 
           env {

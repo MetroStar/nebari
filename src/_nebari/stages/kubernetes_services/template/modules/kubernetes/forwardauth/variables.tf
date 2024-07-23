@@ -36,3 +36,15 @@ variable "cert_secret_name" {
   description = "Name of the secret containing the certificate"
   type        = string
 }
+
+variable "traefik-forwardauth-image" {
+  description = "traefik forwardauth image to use for forward authentication"
+  type = object({
+    name = string
+    tag  = string
+  })
+  default = {
+    name = "maxisme/traefik-forward-auth"
+    tag  = "sha-a98e568"
+  }
+}

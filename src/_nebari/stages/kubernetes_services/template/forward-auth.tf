@@ -8,6 +8,7 @@ module "forwardauth" {
   node-group                  = var.node_groups.general
   forwardauth_middleware_name = var.forwardauth_middleware_name
   cert_secret_name            = var.cert_secret_name
+  traefik-forwardauth-image   = var.traefik-forwardauth-image
 }
 
 variable "forwardauth_middleware_name" {
@@ -28,4 +29,12 @@ output "forward-auth-middleware" {
 output "forward-auth-service" {
   description = "middleware name for use with forward auth"
   value       = module.forwardauth.forward-auth-service
+}
+
+variable "traefik-forwardauth-image" {
+  description = "traefik forwardauth image to use for forward authentication"
+  type = object({
+    name = string
+    tag  = string
+  })
 }
