@@ -76,11 +76,13 @@ module "kubernetes-conda-store-server" {
   external-url = var.endpoint
   realm_id     = var.realm_id
 
-  nfs_capacity           = var.conda-store-filesystem-storage
-  minio_capacity         = coalesce(var.conda-store-object-storage, var.conda-store-filesystem-storage)
-  node-group             = var.node_groups.general
-  conda-store-image      = var.conda-store-image
-  conda-store-image-tag  = var.conda-store-image-tag
+  nfs_capacity              = var.conda-store-filesystem-storage
+  minio_capacity            = coalesce(var.conda-store-object-storage, var.conda-store-filesystem-storage)
+  node-group                = var.node_groups.general
+  conda-store-image         = var.conda-store-image
+  conda-store-image-tag     = var.conda-store-image-tag
+  conda-store-nfs-image     = var.conda-store-nfs-image
+  conda-store-nfs-image-tag = var.conda-store-nfs-image-tag
   default-namespace-name = var.conda-store-default-namespace
   environments = {
     for filename, environment in var.conda-store-environments :
