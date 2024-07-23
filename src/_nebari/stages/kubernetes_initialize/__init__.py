@@ -36,6 +36,8 @@ class ExtContainerReg(schema.Base):
                     )
         return self
 
+class ClusterAutoscaler(schema.Base):
+    overrides: Dict = {}
 
 class InputVars(schema.Base):
     name: str
@@ -45,11 +47,12 @@ class InputVars(schema.Base):
     external_container_reg: Optional[ExtContainerReg] = None
     gpu_enabled: bool = False
     gpu_node_group_names: List[str] = []
+    cluster_autoscaler_overrides: List[str] = []
 
 
 class InputSchema(schema.Base):
     external_container_reg: ExtContainerReg = ExtContainerReg()
-
+    cluster_autoscaler: ClusterAutoscaler = ClusterAutoscaler()
 
 class OutputSchema(schema.Base):
     pass
@@ -75,6 +78,7 @@ class KubernetesInitializeStage(NebariTerraformStage):
             environment=self.config.namespace,
             cloud_provider=self.config.provider.value,
             external_container_reg=self.config.external_container_reg.model_dump(),
+            cluster_autoscaler_overrides=[json.dumps(self.config.cluster_autoscaler.overrides)],
         )
 
         if self.config.provider == schema.ProviderEnum.gcp:

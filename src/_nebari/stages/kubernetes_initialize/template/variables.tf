@@ -30,3 +30,9 @@ variable "gpu_enabled" {
 variable "gpu_node_group_names" {
   description = "Names of node groups with GPU"
 }
+
+variable "cluster_autoscaler_overrides" {
+  description = "Cluster autoscaler helm chart overrides"
+  type        = list(string)
+  default     = []
+}
