@@ -17,6 +17,11 @@ variable "jupyterhub-overrides" {
   default     = []
 }
 
+variable "jupyter-init-image" {
+  description = "init container for jupyter volume mounts"
+  type        = string
+}
+
 variable "jupyterhub-shared-storage" {
   description = "JupyterHub shared storage size [GB]"
   type        = string
@@ -103,6 +108,8 @@ module "jupyterhub" {
   realm_id     = var.realm_id
 
   overrides = var.jupyterhub-overrides
+
+  jupyter-init-image = var.jupyter-init-image
 
   home-pvc = module.jupyterhub-nfs-mount.persistent_volume_claim.name
 

@@ -17,6 +17,7 @@ def base_profile_home_mounts(username):
     """
     home_pvc_name = z2jh.get_config("custom.home-pvc")
     skel_mount = z2jh.get_config("custom.skel-mount")
+    jupyter_init_image = z2jh.get_config("custom.jupyter-init-image")
     pvc_home_mount_path = "home/{username}"
     pod_home_mount_path = "/home/{username}"
 
@@ -56,7 +57,7 @@ def base_profile_home_mounts(username):
     init_containers = [
         {
             "name": "initialize-home-mount",
-            "image": "busybox:1.31",
+            "image": jupyter_init_image,
             "command": ["sh", "-c", command],
             "securityContext": {"runAsUser": 0},
             "volumeMounts": [
@@ -87,6 +88,7 @@ def base_profile_shared_mounts(groups):
     """
     home_pvc_name = z2jh.get_config("custom.home-pvc")
     shared_pvc_name = z2jh.get_config("custom.shared-pvc")
+    jupyter_init_image = z2jh.get_config("custom.jupyter-init-image")
 
     pvc_shared_mount_path = "shared/{group}"
     pod_shared_mount_path = "/shared/{group}"
@@ -118,7 +120,7 @@ def base_profile_shared_mounts(groups):
     init_containers = [
         {
             "name": "initialize-shared-mounts",
-            "image": "busybox:1.31",
+            "image": jupyter_init_image,
             "command": ["sh", "-c", command],
             "securityContext": {"runAsUser": 0},
             "volumeMounts": [
@@ -149,6 +151,7 @@ def profile_conda_store_mounts(username, groups):
     conda_store_pvc_name = z2jh.get_config("custom.conda-store-pvc")
     conda_store_mount = Path(z2jh.get_config("custom.conda-store-mount"))
     default_namespace = z2jh.get_config("custom.default-conda-store-namespace")
+    jupyter_init_image = z2jh.get_config("custom.jupyter-init-image")
 
     extra_pod_config = {
         "volumes": [
@@ -183,7 +186,7 @@ def profile_conda_store_mounts(username, groups):
     init_containers = [
         {
             "name": "initialize-conda-store-mounts",
-            "image": "busybox:1.31",
+            "image": jupyter_init_image,
             "command": ["sh", "-c", command],
             "securityContext": {"runAsUser": 0},
             "volumeMounts": [

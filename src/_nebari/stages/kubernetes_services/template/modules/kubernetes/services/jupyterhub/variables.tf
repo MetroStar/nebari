@@ -14,6 +14,12 @@ variable "overrides" {
   default     = []
 }
 
+variable "jupyter-init-image" {
+  description = "init container for jupyter volume mounts"
+  type        = string
+  default     = "busybox:1.31"
+}
+
 variable "jupyterhub-image" {
   description = "Docker image to use for jupyterhub hub"
   type = object({

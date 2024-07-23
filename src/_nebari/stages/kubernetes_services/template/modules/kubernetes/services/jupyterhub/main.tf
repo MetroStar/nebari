@@ -73,6 +73,7 @@ resource "helm_release" "jupyterhub" {
         shared-pvc                    = var.shared-pvc
         conda-store-pvc               = var.conda-store-pvc
         conda-store-mount             = var.conda-store-mount
+        jupyter-init-image            = var.jupyter-init-image
         default-conda-store-namespace = var.default-conda-store-namespace
         conda-store-service-name      = var.conda-store-service-name
         conda-store-jhub-apps-token   = var.conda-store-jhub-apps-token

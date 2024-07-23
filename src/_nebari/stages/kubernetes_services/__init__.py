@@ -231,6 +231,7 @@ class Telemetry(schema.Base):
 
 class JupyterHub(schema.Base):
     overrides: Dict = {}
+    volume_mount_init_image: str = "busybox:1.31"
 
 class JupyterHubSshImage(schema.Base):
     name: str = "quay.io/jupyterhub-ssh/ssh"
@@ -416,6 +417,7 @@ class JupyterhubInputVars(schema.Base):
     )
     initial_repositories: str = Field(alias="initial-repositories")
     jupyterhub_overrides: List[str] = Field(alias="jupyterhub-overrides")
+    jupyter_init_image: str = Field(alias="jupyter-init-image")
     jupyterhub_stared_storage: str = Field(alias="jupyterhub-shared-storage")
     jupyterhub_shared_endpoint: Optional[str] = Field(
         alias="jupyterhub-shared-endpoint", default=None
@@ -593,6 +595,7 @@ class KubernetesServicesStage(NebariTerraformStage):
                 self.config.default_images.jupyterhub
             ),
             jupyterhub_overrides=[json.dumps(self.config.jupyterhub.overrides)],
+            jupyter_init_image=self.config.jupyterhub.volume_mount_init_image,
             jupyterhub_hub_extraEnv=json.dumps(
                 self.config.jupyterhub.overrides.get("hub", {}).get("extraEnv", [])
             ),
