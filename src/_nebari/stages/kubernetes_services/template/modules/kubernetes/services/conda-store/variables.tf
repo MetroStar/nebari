@@ -45,6 +45,18 @@ variable "conda-store-image-tag" {
   type        = string
 }
 
+variable "conda-store-nfs-image" {
+  description = "Conda-Store volume nfs server image"
+  type        = string
+  default     = "gcr.io/google_containers/volume-nfs"
+}
+
+variable "conda-store-nfs-image-tag" {
+  description = "Version of conda-store volume nfs server to use"
+  type        = string
+  default     = "0.8"
+}
+
 variable "external-url" {
   description = "External url that jupyterhub cluster is accessible"
   type        = string

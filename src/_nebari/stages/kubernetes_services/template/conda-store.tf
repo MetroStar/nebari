@@ -33,6 +33,16 @@ variable "conda-store-image-tag" {
   type        = string
 }
 
+variable "conda-store-nfs-image" {
+  description = "Conda-Store volume nfs server image"
+  type        = string
+}
+
+variable "conda-store-nfs-image-tag" {
+  description = "Version of conda-store volume nfs server to use"
+  type        = string
+}
+
 variable "conda-store-service-token-scopes" {
   description = "Map of services tokens and scopes for conda-store"
   type        = map(any)

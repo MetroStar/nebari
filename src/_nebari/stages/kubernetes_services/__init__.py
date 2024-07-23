@@ -185,6 +185,8 @@ class CondaStore(schema.Base):
     extra_config: str = ""
     image: str = "quansight/conda-store-server"
     image_tag: str = constants.DEFAULT_CONDA_STORE_IMAGE_TAG
+    nfs_server_image: str = "gcr.io/google_containers/volume-nfs"
+    nfs_server_image_tag: str = "0.8"
     default_namespace: str = "nebari-git"
     object_storage: str = "200Gi"
     overrides: CondaStoreOverrides = CondaStoreOverrides()
@@ -388,6 +390,8 @@ class CondaStoreInputVars(schema.Base):
     conda_store_extra_config: str = Field(alias="conda-store-extra-config")
     conda_store_image: str = Field(alias="conda-store-image")
     conda_store_image_tag: str = Field(alias="conda-store-image-tag")
+    conda_store_nfs_image: str = Field(alias="conda-store-nfs-image")
+    conda_store_nfs_image_tag: str = Field(alias="conda-store-nfs-image-tag")
     conda_store_service_token_scopes: Dict[str, Dict[str, Any]] = Field(
         alias="conda-store-service-token-scopes"
     )
@@ -556,6 +560,8 @@ class KubernetesServicesStage(NebariTerraformStage):
             conda_store_extra_config=self.config.conda_store.extra_config,
             conda_store_image=self.config.conda_store.image,
             conda_store_image_tag=self.config.conda_store.image_tag,
+            conda_store_nfs_image=self.config.conda_store.nfs_server_image,
+            conda_store_nfs_image_tag=self.config.conda_store.nfs_server_image_tag,
             conda_store_minio_overrides=[json.dumps(self.config.conda_store.overrides.minio)],
             conda_store_postgresql_overrides=[json.dumps(self.config.conda_store.overrides.postgresql)],
             conda_store_redis_overrides=[json.dumps(self.config.conda_store.overrides.redis)],

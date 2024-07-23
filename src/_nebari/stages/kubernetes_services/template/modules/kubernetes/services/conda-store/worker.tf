@@ -136,7 +136,7 @@ resource "kubernetes_deployment" "worker" {
 
         container {
           name  = "nfs-server"
-          image = "gcr.io/google_containers/volume-nfs:0.8"
+          image = "${var.conda-store-nfs-image}:${var.conda-store-nfs-image-tag}"
 
           port {
             name           = "nfs"
