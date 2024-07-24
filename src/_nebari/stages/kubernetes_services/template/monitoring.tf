@@ -3,7 +3,7 @@ variable "monitoring-enabled" {
   type        = bool
 }
 
-variable "overrides" {
+variable "prometheus-overrides" {
   description = "Grafana helm chart overrides"
   type        = list(string)
 }
@@ -16,7 +16,7 @@ module "monitoring" {
   external-url         = var.endpoint
   realm_id             = var.realm_id
   jupyterhub_api_token = module.jupyterhub.services.monitoring.api_token
-  overrides            = var.overrides
+  overrides            = var.prometheus-overrides
 
   node-group = var.node_groups.general
 }
