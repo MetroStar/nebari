@@ -1,4 +1,4 @@
-variable "name" {
+fvariable "name" {
   description = "Prefix name to assign to Nebari resources"
   type        = string
 }
@@ -54,6 +54,12 @@ variable "vpc_cidr_block" {
 variable "kubeconfig_filename" {
   description = "Kubernetes kubeconfig written to filesystem"
   type        = string
+}
+
+variable "node_bootstrap_command" {
+  description = "Custom pre-bootstrap and /etc/eks/bootstrap.sh commands run on EKS nodes"
+  type        = string
+  default     = null
 }
 
 variable "eks_endpoint_public_access" {

@@ -60,6 +60,12 @@ variable "node_group_instance_type" {
   default     = "m5.large"
 }
 
+variable "node_bootstrap_command" {
+  description = "Custom pre-bootstrap and /etc/eks/bootstrap.sh commands run on EKS nodes"
+  type        = string
+  default     = null
+}
+
 variable "endpoint_public_access" {
   type    = bool
   default = true
