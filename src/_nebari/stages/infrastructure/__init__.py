@@ -118,6 +118,7 @@ class AzureInputVars(schema.Base):
 class AWSNodeGroupInputVars(schema.Base):
     name: str
     instance_type: str
+    custom_ami: Optional[str] = None
     gpu: bool = False
     min_size: int
     desired_size: int
@@ -431,10 +432,11 @@ class AzureProvider(schema.Base):
 
 class AWSNodeGroup(schema.Base):
     instance: str
+    custom_ami: Optional[str] = None
     min_nodes: int = 0
     max_nodes: int
     gpu: bool = False
-    single_subnet: bool = False
+    single_subnet: bool = False   
     permissions_boundary: Optional[str] = None
 
 
@@ -806,6 +808,7 @@ class KubernetesInfrastructureStage(NebariTerraformStage):
                     AWSNodeGroupInputVars(
                         name=name,
                         instance_type=node_group.instance,
+                        custom_ami=node_group.custom_ami,
                         gpu=node_group.gpu,
                         min_size=node_group.min_nodes,
                         desired_size=node_group.min_nodes,

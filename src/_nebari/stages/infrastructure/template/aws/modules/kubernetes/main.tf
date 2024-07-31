@@ -23,8 +23,9 @@ resource "aws_eks_cluster" "main" {
 
 resource "aws_launch_template" "main" {
   # Invoke launch_template only if var.node_bootstrap_command is not null
-  count = var.node_bootstrap_command == null ? 0 : length(var.node_groups)
-  name      = var.node_groups[count.index].name
+  count    = var.node_bootstrap_command == null ? 0 : length(var.node_groups)
+  name     = var.node_groups[count.index].name
+  image_id = var.node_groups[count.index].custom_ami
 
   vpc_security_group_ids = var.cluster_security_groups
 
@@ -66,7 +67,7 @@ resource "aws_eks_node_group" "main" {
   subnet_ids      = var.node_groups[count.index].single_subnet ? [element(var.cluster_subnets, 0)] : var.cluster_subnets
 
   instance_types = [var.node_groups[count.index].instance_type]
-  ami_type       = var.node_groups[count.index].gpu == true ? "AL2_x86_64_GPU" : "AL2_x86_64"
+  ami_type       = var.node_groups[count.index].custom_ami != null ? "CUSTOM" : (var.node_groups[count.index].gpu == true ? "AL2_x86_64_GPU" : "AL2_x86_64")
   disk_size      = var.node_bootstrap_command == null ? 50 : null
 
   scaling_config {
