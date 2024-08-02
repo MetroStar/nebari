@@ -48,7 +48,7 @@ variable "availability_zones" {
 }
 
 variable "vpc_cidr_block" {
-  description = "VPC cidr block for infastructure"
+  description = "VPC cidr block for infrastructure"
   type        = string
 }
 
