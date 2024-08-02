@@ -92,7 +92,7 @@ module "kubernetes" {
 
   node_groups = var.node_groups
 
-  node_bootstrap_command  = var.node_bootstrap_command
+  node_prebootstrap_command  = var.node_prebootstrap_command
   endpoint_public_access  = var.eks_endpoint_public_access
   endpoint_private_access = var.eks_endpoint_private_access
   public_access_cidrs     = var.eks_public_access_cidrs

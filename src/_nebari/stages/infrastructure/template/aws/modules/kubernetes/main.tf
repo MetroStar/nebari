@@ -21,11 +21,17 @@ resource "aws_eks_cluster" "main" {
   tags = merge({ Name = var.name }, var.tags)
 }
 
+## aws_launch_template user_data invocation
+## If using a Custom AMI, then the /etc/eks/bootstrap cmds and args must be included/modified,
+## otherwise, on default AWS EKS Node AMI, the bootstrap cmd is appended automatically
 resource "aws_launch_template" "main" {
-  # Invoke launch_template only if var.node_bootstrap_command is not null
-  count    = var.node_bootstrap_command == null ? 0 : length(var.node_groups)
-  name     = var.node_groups[count.index].name
-  image_id = var.node_groups[count.index].custom_ami
+  # Invoke launch_template only if var.node_prebootstrap_command is not null or custom_ami is not null
+  #count   = var.node_prebootstrap_command == null ? 0 : length(var.node_groups)
+  #count    = var.node_prebootstrap_command != null ? length(var.node_groups) : length([for node_group in var.node_groups : node_group.custom_ami if node_group.custom_ami != null])
+  count    = var.node_prebootstrap_command != null ? length(var.node_groups) : length(local.cust_ami_node_index)
+
+  name     = var.node_prebootstrap_command != null ? var.node_groups[count.index].name : var.node_groups[local.cust_ami_node_index[count.index]].name
+  image_id = var.node_prebootstrap_command != null ? var.node_groups[count.index].custom_ami : var.node_groups[local.cust_ami_node_index[count.index]].custom_ami
 
   vpc_security_group_ids = var.cluster_security_groups
 
@@ -40,20 +46,21 @@ resource "aws_launch_template" "main" {
   # https://docs.aws.amazon.com/eks/latest/userguide/launch-templates.html#launch-template-basics
   user_data                     = base64encode(<<-EOF
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="//"
+Content-Type: multipart/mixed; boundary="==MYBOUNDARY=="
 
---//
+--==MYBOUNDARY==
 Content-Type: text/x-shellscript; charset="us-ascii"
-${var.node_bootstrap_command}
-## If using a Custom AMI, then the following bootstrap cmds and args must be included/modified,
-## otherwise, on AWS EKS Node AMI, the /etc/eks/bootstrap.sh cmd is appended automatically
-#set -ex
-#B64_CLUSTER_CA=${aws_eks_cluster.main.certificate_authority[0].data}
-#API_SERVER_URL=${aws_eks_cluster.main.endpoint}
-#K8S_CLUSTER_DNS_IP=172.20.0.10
-#/etc/eks/bootstrap.sh ${aws_eks_cluster.main.name} --kubelet-extra-args '--node-labels=eks.amazonaws.com/nodegroup-image=<ami-xxxxxxxxxx>,dedicated=${var.node_groups[count.index].name},eks.amazonaws.com/capacityType=ON_DEMAND,eks.amazonaws.com/nodegroup=${var.node_groups[count.index].name} --max-pods=58' --b64-cluster-ca $B64_CLUSTER_CA --apiserver-endpoint $API_SERVER_URL --dns-cluster-ip $K8S_CLUSTER_DNS_IP --use-max-pods false
+%{ if var.node_prebootstrap_command != null }${var.node_prebootstrap_command}%{ endif }
 
---//--\
+%{ if var.node_prebootstrap_command != null && var.node_groups[count.index].custom_ami != null }--==MYBOUNDARY==%{ endif }
+%{ if var.node_prebootstrap_command != null && var.node_groups[count.index].custom_ami != null }Content-Type: text/x-shellscript; charset="us-ascii"%{ endif }
+%{ if var.node_prebootstrap_command != null && var.node_groups[count.index].custom_ami == null }%{ else }#!/bin/bash%{ endif }
+%{ if var.node_prebootstrap_command != null && var.node_groups[count.index].custom_ami == null }%{ else }set -ex%{ endif }
+%{ if var.node_prebootstrap_command != null && var.node_groups[count.index].custom_ami == null }%{ else }B64_CLUSTER_CA=${aws_eks_cluster.main.certificate_authority[0].data}%{ endif }
+%{ if var.node_prebootstrap_command != null && var.node_groups[count.index].custom_ami == null }%{ else }API_SERVER_URL=${aws_eks_cluster.main.endpoint}%{ endif }
+%{ if var.node_prebootstrap_command != null && var.node_groups[count.index].custom_ami == null }%{ else }/etc/eks/bootstrap.sh ${aws_eks_cluster.main.name} --b64-cluster-ca $B64_CLUSTER_CA --apiserver-endpoint $API_SERVER_URL%{ endif }
+
+--==MYBOUNDARY==--
   EOF
   )
 }
@@ -68,7 +75,7 @@ resource "aws_eks_node_group" "main" {
 
   instance_types = [var.node_groups[count.index].instance_type]
   ami_type       = var.node_groups[count.index].custom_ami != null ? "CUSTOM" : (var.node_groups[count.index].gpu == true ? "AL2_x86_64_GPU" : "AL2_x86_64")
-  disk_size      = var.node_bootstrap_command == null ? 50 : null
+  disk_size      = var.node_prebootstrap_command == null && var.node_groups[count.index].custom_ami == null ? 50 : null
 
   scaling_config {
     min_size     = var.node_groups[count.index].min_size
@@ -86,13 +93,13 @@ resource "aws_eks_node_group" "main" {
     ]
   }
 
-  # Invoke launch_template only if var.node_bootstrap_command is not null
+  # Invoke launch_template only if var.node_prebootstrap_command is not null or node group custom_ami is not null
   dynamic "launch_template" {
-    for_each = var.node_bootstrap_command == null ? [] : [1]
+    for_each = var.node_prebootstrap_command == null && var.node_groups[count.index].custom_ami == null ? [] : [1]
     content {
-      id = aws_launch_template.main[count.index].id
+      id = aws_launch_template.main[index(local.cust_ami_node_index, count.index)].id
       #version = aws_launch_template.main[count.index].default_version
-      version = aws_launch_template.main[count.index].latest_version
+      version = aws_launch_template.main[index(local.cust_ami_node_index, count.index)].latest_version
     }
   }
 

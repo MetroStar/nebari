@@ -134,7 +134,7 @@ class AWSInputVars(schema.Base):
     existing_subnet_ids: Optional[List[str]] = None
     region: str
     kubernetes_version: str
-    node_bootstrap_command: Optional[str] = None
+    node_prebootstrap_command: Optional[str] = None
     eks_endpoint_public_access: bool = True
     eks_endpoint_private_access: bool = False
     node_groups: List[AWSNodeGroupInputVars]
@@ -456,7 +456,7 @@ class AmazonWebServicesProvider(schema.Base):
     kubernetes_version: str
     availability_zones: Optional[List[str]]
     node_groups: Dict[str, AWSNodeGroup] = DEFAULT_AWS_NODE_GROUPS
-    node_bootstrap_command: Optional[str] = None
+    node_prebootstrap_command: Optional[str] = None
     eks_endpoint_public_access: bool = True
     eks_endpoint_private_access: bool = False
     existing_subnet_ids: Optional[List[str]] = None
@@ -797,7 +797,7 @@ class KubernetesInfrastructureStage(NebariTerraformStage):
             return AWSInputVars(
                 name=self.config.escaped_project_name,
                 environment=self.config.namespace,
-                node_bootstrap_command=self.config.amazon_web_services.node_bootstrap_command,
+                node_prebootstrap_command=self.config.amazon_web_services.node_prebootstrap_command,
                 eks_endpoint_public_access=self.config.amazon_web_services.eks_endpoint_public_access,
                 eks_endpoint_private_access=self.config.amazon_web_services.eks_endpoint_private_access,
                 existing_subnet_ids=self.config.amazon_web_services.existing_subnet_ids,
