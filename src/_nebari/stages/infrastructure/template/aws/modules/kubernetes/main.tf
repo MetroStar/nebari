@@ -26,8 +26,6 @@ resource "aws_eks_cluster" "main" {
 ## otherwise, on default AWS EKS Node AMI, the bootstrap cmd is appended automatically
 resource "aws_launch_template" "main" {
   # Invoke launch_template only if var.node_prebootstrap_command is not null or custom_ami is not null
-  #count   = var.node_prebootstrap_command == null ? 0 : length(var.node_groups)
-  #count    = var.node_prebootstrap_command != null ? length(var.node_groups) : length([for node_group in var.node_groups : node_group.custom_ami if node_group.custom_ami != null])
   count    = var.node_prebootstrap_command != null ? length(var.node_groups) : length(local.cust_ami_node_index)
 
   name     = var.node_prebootstrap_command != null ? var.node_groups[count.index].name : var.node_groups[local.cust_ami_node_index[count.index]].name
@@ -97,9 +95,9 @@ resource "aws_eks_node_group" "main" {
   dynamic "launch_template" {
     for_each = var.node_prebootstrap_command == null && var.node_groups[count.index].custom_ami == null ? [] : [1]
     content {
-      id = aws_launch_template.main[index(local.cust_ami_node_index, count.index)].id
+      id      = var.node_prebootstrap_command != null ? aws_launch_template.main[count.index].id : aws_launch_template.main[index(local.cust_ami_node_index, count.index)].id
+      version = var.node_prebootstrap_command != null ? aws_launch_template.main[count.index].latest_version : aws_launch_template.main[index(local.cust_ami_node_index, count.index)].latest_version
       #version = aws_launch_template.main[count.index].default_version
-      version = aws_launch_template.main[index(local.cust_ami_node_index, count.index)].latest_version
     }
   }
 
