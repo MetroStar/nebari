@@ -8,7 +8,8 @@ resource "aws_eks_cluster" "main" {
   vpc_config {
     security_group_ids = var.cluster_security_groups
     subnet_ids         = var.cluster_subnets
-
+    #trivy:ignore:AVD-AWS-0040
+    endpoint_public_access  = var.endpoint_public_access
     endpoint_private_access = var.endpoint_private_access
     public_access_cidrs     = var.public_access_cidrs
   }
@@ -89,8 +90,11 @@ resource "aws_eks_addon" "aws-ebs-csi-driver" {
 }
 
 resource "aws_eks_addon" "coredns" {
-  addon_name   = "coredns"
-  cluster_name = aws_eks_cluster.main.name
+  addon_name                  = "coredns"
+  cluster_name                = aws_eks_cluster.main.name
+  resolve_conflicts_on_create = "OVERWRITE"
+  resolve_conflicts_on_update = "OVERWRITE"
+
 
   configuration_values = jsonencode({
     nodeSelector = {
